@@ -31,7 +31,7 @@ def main():
     mmsi_filter = st.text_input("Enter Vessel MMSI:", "")
 
     if st.button("Track Boat"):
-        latitude, longitude = asyncio.run(connect_ais_stream(mmsi_filter, selected_bounding_box))
+        latitude, longitude = asyncio.run(connect_ais_stream(mmsi_filter))
 
         rounded_latitude = round(latitude, 5)
         rounded_longitude = round(longitude, 5)
