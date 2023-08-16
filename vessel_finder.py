@@ -10,7 +10,7 @@ async def connect_ais_stream(mmsi_filter, bounding_box):
     async with websockets.connect("wss://stream.aisstream.io/v0/stream") as websocket:
         subscribe_message = {
             "APIKey": "1b7af1885ca28ca99cc1a166c9a6aa5983dee696",
-            "BoundingBoxes": [[[-bounding_box, -bounding_box], [bounding_box, bounding_box]]],
+            "BoundingBoxes": [[[-90, 90], [-180, 180]]],
             "FiltersShipMMSI": [mmsi_filter]
         }
 
@@ -29,9 +29,6 @@ def main():
     st.title("Vessel Location Tracker")
 
     mmsi_filter = st.text_input("Enter Vessel MMSI:", "")
-
-    bounding_box_options = list(range(10, 100, 10))
-    selected_bounding_box = st.selectbox("Select BoundingBox Size:", bounding_box_options)
 
     if st.button("Track Boat"):
         latitude, longitude = asyncio.run(connect_ais_stream(mmsi_filter, selected_bounding_box))
