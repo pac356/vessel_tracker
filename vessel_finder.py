@@ -5,7 +5,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timezone
 
-async def connect_ais_stream(mmsi_filter, bounding_box):
+async def connect_ais_stream(mmsi_filter):
 
     async with websockets.connect("wss://stream.aisstream.io/v0/stream") as websocket:
         subscribe_message = {
