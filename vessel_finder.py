@@ -20,7 +20,7 @@ async def connect_ais_stream(mmsi_filters):
         await websocket.send(json.dumps(subscribe_message))
         
         try:
-            message_json = await asyncio.wait_for(websocket.recv(), timeout=10)  # Wait for 10 seconds
+            message_json = await asyncio.wait_for(websocket.recv(), timeout=120)  # Wait for 10 seconds
             message = json.loads(message_json)
             
             if message["MessageType"] == "PositionReport":
