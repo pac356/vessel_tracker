@@ -6,13 +6,14 @@ import pandas as pd
 import os
 
 # Define this environment variable outside the code for security reasons
-API_KEY = os.environ.get("c0ff27fded31c9c0ed390b7dcedae4e40daf0c62")
+API_KEY = os.environ.get("AIS_STREAM_API_KEY")
+
 
 
 async def connect_ais_stream(mmsi_filter):
     url = "wss://stream.aisstream.io/v0/stream"
     subscribe_message = {
-        "APIKey": API_KEY,
+        "APIKey": c0ff27fded31c9c0ed390b7dcedae4e40daf0c62,
         "BoundingBoxes": [[[-90, -180], [90, 180]]],
         "FiltersShipMMSI": [mmsi_filter],
         "FilterMessageTypes": ["PositionReport"]
