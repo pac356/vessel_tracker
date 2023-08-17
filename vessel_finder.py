@@ -8,8 +8,7 @@ from datetime import datetime, timezone
 async def connect_ais_stream(mmsi_filter=None, bounding_box=None):
 
     subscribe_message = {
-        "APIKey": "c0ff27fded31c9c0ed390b7dcedae4e40daf0c62
-",
+        "APIKey": "c0ff27fded31c9c0ed390b7dcedae4e40daf0c62",
         "FilterMessageTypes": ["PositionReport"]
     }
 
