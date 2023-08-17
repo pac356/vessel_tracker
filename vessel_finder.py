@@ -3,48 +3,54 @@ import websockets
 import json
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timezone
+import os
+
+# Define this environment variable outside the code for security reasons
+API_KEY = os.environ.get("AIS_STREAM_API_KEY")
+
 
 async def connect_ais_stream(mmsi_filter):
+    url = "wss://stream.aisstream.io/v0/stream"
+    subscribe_message = {
+        "APIKey": API_KEY,
+        "BoundingBoxes": [[[-90, -180], [90, 180]]],
+        "FiltersShipMMSI": [mmsi_filter],
+        "FilterMessageTypes": ["PositionReport"]
+    }
 
-    async with websockets.connect("wss://stream.aisstream.io/v0/stream") as websocket:
-        subscribe_message = {
-            "APIKey": "1b7af1885ca28ca99cc1a166c9a6aa5983dee696",
-            "BoundingBoxes": [[[-90, 90], [-180, 180]]],
-            "FiltersShipMMSI": [mmsi_filter]
-        }
-
-        subscribe_message_json = json.dumps(subscribe_message)
-        await websocket.send(subscribe_message_json)
-
-        async for message_json in websocket:
+    async with websockets.connect(url) as websocket:
+        await websocket.send(json.dumps(subscribe_message))
+        try:
+            message_json = await asyncio.wait_for(websocket.recv(), timeout=10)  # Wait for 10 seconds
             message = json.loads(message_json)
-            message_type = message["MessageType"]
 
-            if message_type == "PositionReport":
+            if message["MessageType"] == "PositionReport":
                 ais_message = message['Message']['PositionReport']
                 return ais_message['Latitude'], ais_message['Longitude']
+        except asyncio.TimeoutError:
+            st.write("Timed out waiting for data. Please try again.")
+
 
 def main():
     st.title("Vessel Location Tracker")
-
     mmsi_filter = st.text_input("Enter Vessel MMSI:", "")
 
     if st.button("Track Boat"):
-        latitude, longitude = asyncio.run(connect_ais_stream(mmsi_filter))
+        if not API_KEY:
+            st.write("API Key is missing. Please set it up.")
+            return
 
-        rounded_latitude = round(latitude, 5)
-        rounded_longitude = round(longitude, 5)
+        try:
+            latitude, longitude = asyncio.run(connect_ais_stream(mmsi_filter))
 
-        st.write(f"Latitude: {rounded_latitude}")
-        st.write(f"Longitude: {rounded_longitude}")
+            st.write(f"Latitude: {round(latitude, 5)}")
+            st.write(f"Longitude: {round(longitude, 5)}")
 
-        # Create a DataFrame with the location data
-        data = {'LATITUDE': [latitude], 'LONGITUDE': [longitude]}
-        df = pd.DataFrame(data)
+            data = {'LATITUDE': [latitude], 'LONGITUDE': [longitude]}
+            st.map(pd.DataFrame(data))
+        except TypeError:
+            st.write("Failed to fetch vessel location. Please ensure the MMSI is correct.")
 
-        st.write("Vessel Location:")
-        st.map(df)
 
 if __name__ == "__main__":
     main()
