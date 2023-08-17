@@ -12,14 +12,13 @@ async def connect_ais_stream(mmsi_filter):
     subscribe_message = {
         "APIKey": API_KEY,
         "BoundingBoxes": [[[-90, -180], [90, 180]]],
-        "FiltersShipMMSI": [mmsi_filter],
-        "FilterMessageTypes": ["PositionReport"]
+        "FiltersShipMMSI": [mmsi_filter]    
     }
 
     async with websockets.connect(url) as websocket:
         await websocket.send(json.dumps(subscribe_message))
         try:
-            message_json = await asyncio.wait_for(websocket.recv(), timeout=10)  # Wait for 10 seconds
+            message_json = await asyncio.wait_for(websocket.recv(), timeout=90)  # Wait for 10 seconds
             message = json.loads(message_json)
 
             if message["MessageType"] == "PositionReport":
