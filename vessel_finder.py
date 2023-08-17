@@ -4,7 +4,7 @@ import json
 import streamlit as st
 import pandas as pd
 
-API_KEY = "1b7af1885ca28ca99cc1a166c9a6aa5983dee696"
+API_KEY = "c0ff27fded31c9c0ed390b7dcedae4e40daf0c62"
 
 
 async def connect_ais_stream(mmsi_filter):
