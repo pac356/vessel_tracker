@@ -3,17 +3,14 @@ import websockets
 import json
 import streamlit as st
 import pandas as pd
-import os
 
-# Define this environment variable outside the code for security reasons
-API_KEY = os.environ.get("c0ff27fded31c9c0ed390b7dcedae4e40daf0c62")
-
+API_KEY = "1b7af1885ca28ca99cc1a166c9a6aa5983dee696"
 
 
 async def connect_ais_stream(mmsi_filter):
     url = "wss://stream.aisstream.io/v0/stream"
     subscribe_message = {
-        "APIKey": c0ff27fded31c9c0ed390b7dcedae4e40daf0c62,
+        "APIKey": API_KEY,
         "BoundingBoxes": [[[-90, -180], [90, 180]]],
         "FiltersShipMMSI": [mmsi_filter],
         "FilterMessageTypes": ["PositionReport"]
@@ -37,10 +34,6 @@ def main():
     mmsi_filter = st.text_input("Enter Vessel MMSI:", "")
 
     if st.button("Track Boat"):
-        if not API_KEY:
-            st.write("API Key is missing. Please set it up.")
-            return
-
         try:
             latitude, longitude = asyncio.run(connect_ais_stream(mmsi_filter))
 
