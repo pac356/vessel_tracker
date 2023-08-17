@@ -6,7 +6,7 @@ import pandas as pd
 import os
 
 # Define this environment variable outside the code for security reasons
-API_KEY = os.environ.get("AIS_STREAM_API_KEY")
+API_KEY = os.environ.get("c0ff27fded31c9c0ed390b7dcedae4e40daf0c62")
 
 
 async def connect_ais_stream(mmsi_filter):
