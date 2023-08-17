@@ -3,12 +3,11 @@ import websockets
 import json
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timezone
 
 async def connect_ais_stream(mmsi_filter=None, bounding_box=None):
 
     subscribe_message = {
-        "APIKey": "c0ff27fded31c9c0ed390b7dcedae4e40daf0c62",
+        "APIKey": "1b7af1885ca28ca99cc1a166c9a6aa5983dee696",
         "FilterMessageTypes": ["PositionReport"]
     }
 
@@ -22,16 +21,16 @@ async def connect_ais_stream(mmsi_filter=None, bounding_box=None):
         subscribe_message_json = json.dumps(subscribe_message)
         await websocket.send(subscribe_message_json)
 
-        # Assuming multiple messages can be received for bounding box query
         positions = []
-        try:
-            async for message_json in asyncio.wait_for(websocket, timeout=60):
+        while True:  # Infinite loop to keep fetching messages
+            try:
+                message_json = await asyncio.wait_for(websocket.recv(), timeout=60)
                 message = json.loads(message_json)
                 if message["MessageType"] == "PositionReport":
                     ais_message = message['Message']['PositionReport']
                     positions.append((ais_message['Latitude'], ais_message['Longitude']))
-        except asyncio.TimeoutError:
-            pass
+            except asyncio.TimeoutError:
+                break  # If a timeout occurs, exit the loop
 
         return positions
 
