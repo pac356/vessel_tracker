@@ -24,7 +24,7 @@ async def connect_ais_stream(mmsi_filter=None, bounding_box=None):
         positions = []
         while True:  # Infinite loop to keep fetching messages
             try:
-                message_json = await asyncio.wait_for(websocket.recv(), timeout=60)
+                message_json = await asyncio.wait_for(websocket.recv(), timeout=300)
                 message = json.loads(message_json)
                 if message["MessageType"] == "PositionReport":
                     ais_message = message['Message']['PositionReport']
